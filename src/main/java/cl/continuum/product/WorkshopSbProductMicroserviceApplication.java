@@ -1,13 +1,13 @@
-package cl.continuum.workshop.sb.product;
+package cl.continuum.product;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class ProductApplication {
+public class WorkshopSbProductMicroserviceApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(ProductApplication.class, args);
+		SpringApplication.run(WorkshopSbProductMicroserviceApplication.class, args);
 	}
 
 }
