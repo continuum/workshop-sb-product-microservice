@@ -17,7 +17,6 @@ import java.util.Map;
 public class ProductResource {
 
     @Autowired
-    @Qualifier("ProductServiceMock")
     private ProductService productService;
 
     @Autowired

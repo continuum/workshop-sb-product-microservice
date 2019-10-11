@@ -1,12 +1,14 @@
 package cl.continuum.product.service;
 
 import cl.continuum.product.model.Product;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
-@Service("ProductServiceMock")
+@Service
+@Profile("!prod")
 public class ProductServiceMock implements ProductService {
 
     private static Map<Long, Product> productMap = new HashMap<>();
