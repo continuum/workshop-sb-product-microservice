@@ -16,6 +16,7 @@ import java.util.Optional;
 @Service
 @Profile("prod")
 public class ProductSpringServiceImpl implements ProductService {
+
     @Autowired
     private ProductCrudRepository productRepository;
 

@@ -4,7 +4,6 @@ import cl.continuum.product.model.Product;
 import cl.continuum.product.service.DetailService;
 import cl.continuum.product.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,7 +19,6 @@ public class ProductResource {
     private ProductService productService;
 
     @Autowired
-    @Qualifier("DetailServiceMock")
     private DetailService detailService;
 
     @GetMapping(path = "")

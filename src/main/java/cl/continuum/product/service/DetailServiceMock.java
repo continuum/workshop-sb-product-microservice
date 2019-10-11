@@ -1,11 +1,13 @@
 package cl.continuum.product.service;
 
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
 import java.util.Map;
 
-@Service("DetailServiceMock")
+@Service
+@Profile("!prod")
 public class DetailServiceMock implements DetailService {
 
     @Override
