@@ -1,4 +1,4 @@
-package cl.continuum.service;
+package cl.continuum.product.service;
 
 import cl.continuum.product.model.Product;
 
