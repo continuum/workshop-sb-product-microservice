@@ -42,7 +42,7 @@ public class ProductResource {
         if (product == null) {
             return ResponseEntity.status(404).build();
         }
-        Map<String, Object> detail = detailService.get(product.getName());
+        List detail = detailService.get(product.getName());
         product.setDetail(detail);
         return ResponseEntity.ok(product);
     }

@@ -3,7 +3,9 @@ package cl.continuum.product.service;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Service
@@ -11,7 +13,7 @@ import java.util.Map;
 public class DetailServiceMock implements DetailService {
 
     @Override
-    public Map<String, Object> get(String name) {
+    public List get(String name) {
         Map<String, Object> detail = new HashMap<>();
         //{id: 100, rating: 4, comments_count: 100, price: 1200, ecommerce: “amazon”}
         detail.put("id", 1);
@@ -19,6 +21,6 @@ public class DetailServiceMock implements DetailService {
         detail.put("comments_count", 100);
         detail.put("price", 100);
         detail.put("ecommerce", "Amazon");
-        return detail;
+        return new ArrayList<Object>(detail.values());
     }
 }

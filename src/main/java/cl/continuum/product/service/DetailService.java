@@ -1,8 +1,9 @@
 package cl.continuum.product.service;
 
+import java.util.List;
 import java.util.Map;
 
 public interface DetailService {
 
-    Map<String, Object> get(String name);
+    List get(String name);
 }

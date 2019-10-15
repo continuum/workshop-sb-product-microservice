@@ -1,13 +1,18 @@
 package cl.continuum.product.service;
 
+import cl.continuum.product.model.Product;
+import cl.continuum.product.model.Rating;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Profile;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Service
@@ -23,11 +28,17 @@ public class DetailServiceImpl implements DetailService {
 
     @Override
     @SuppressWarnings(value = "unchecked")
-    public Map<String, Object> get(String name) {
+    public List get(String name) {
         try {
             String url = String.format("%s/api/v1/rating", SERVICE_HOST);
             UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(url).queryParam("name", name);
-            ResponseEntity<Map> resp = restTemplate().getForEntity(builder.toUriString(), Map.class);
+            //ResponseEntity<List> resp = restTemplate().getForEntity(builder.toUriString(), List.class);
+
+            ResponseEntity<List<Rating>> resp =  restTemplate().exchange(
+                    String.format("%s?name=%s",url,name),
+                    HttpMethod.GET,
+                    null,
+                    new ParameterizedTypeReference<List<Rating>>(){});
             if (resp.getStatusCode().value() != 200) {
                 throw new Exception("Gateway Error");
             }
