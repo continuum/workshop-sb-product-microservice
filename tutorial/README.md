@@ -48,3 +48,15 @@ Luego que el IDE termine de importar el proyecto y descargar las dependencias, n
 
 ![](./images/project.png)
 
+### Manos a la Obra
+
+crear package entity
+
+![](./images/create_package.png)
+![](./images/create_package2.png)
+
+crear class entity
+
+![](./images/create_class.png)
+![](./images/create_class2.png)
+
