@@ -6,5 +6,5 @@ import org.springframework.data.repository.CrudRepository;
 import java.util.List;
 
 public interface ProductCrudRepository extends CrudRepository<ProductEntity, Long> {
-    List<ProductEntity> findByName(String name);
+    List<ProductEntity> findByNameLike(String name);
 }

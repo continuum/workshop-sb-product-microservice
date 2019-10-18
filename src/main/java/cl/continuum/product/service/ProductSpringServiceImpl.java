@@ -34,7 +34,7 @@ public class ProductSpringServiceImpl implements ProductService {
 
     @Override
     public List<Product> list(String name) {
-        Iterable<ProductEntity> entities = null == name ? productRepository.findAll() : productRepository.findByName(name);
+        Iterable<ProductEntity> entities = null == name ? productRepository.findAll() : productRepository.findByNameLike("%" + name + "%");
         List<Product> products = new ArrayList<>();
         entities.forEach(entity -> {
             Product product = new Product();
