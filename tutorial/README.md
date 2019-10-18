@@ -26,9 +26,17 @@ vamos a descomprimir en una carpeta a elección
 
 ![](./images/start_spring_io_003.png)
 
-Para este workshop recomendamos usar IntelliJ IDEA, pero puedes usar el IDE de tu preferencia para abrir el projecto generado por Spring Initializr
+## Importar proyecto
+
+Para este workshop o cualquier proyecto Java que te toque trabajar recomendamos usar IntelliJ IDEA, el cual cuenta
+con una versión Community que es gratuita y lo puedes descargar en la siguiente URL: https://www.jetbrains.com/idea/
  
-Abrir IntelliJ
+Si bien puedes abrir el proyecto en cualquier IDE o editor de texto, asumiremos para el resto del workshop que
+estas utilizando el que te hemos recomendado.
+ 
+### Abrir IntelliJ IDEA
+
+Al ejecutar el IDE te encontraras con una ventana similar a esta:
 
 ![](./images/open_project.png)
 
