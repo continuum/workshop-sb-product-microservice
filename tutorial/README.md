@@ -51,4 +51,16 @@ crear class entity
 
 ![](./images/create_class.png)
 ![](./images/create_class2.png)
+![](./images/entity_content.png)
+
+crear package model
+
+![](./images/create_package.png)
+![](./images/model_package.png)
+
+crear class entity
+
+![](./images/create_class.png)
+![](./images/create_class2.png)
+![](./images/entity_content.png)
 
