@@ -57,9 +57,12 @@ Comenzaremos a crear nuestro poyecto de abajo hacia arriba (desde la capa de dat
 
 #### Configuración
 
-Lo primero que haremos será indicarle a Spring que nuestra percistencia sera en una base de datos H2, para
-lo cual debemos agregar la siguientes lineas en el archivo `src/main/resources/application.properties`
+Dado que hemos incluido la dependencia de H2 en nuestro proyecto, Spring detectara automaticamente que es
+esta la base de datos que vamos a usar.
 
+Para disponer de una consola web donde podamos manupularla y ademas activar que nos muestre por consola el
+codigo SQL que va generando debemos agregar las siguientes lineas en el archivo 
+`src/main/resources/application.properties`
 
 ```properties
 # Enabling H2 Console
@@ -85,7 +88,50 @@ Luego creamos la clase Entity:
 ![](./images/create_class.png)
 
 ![](./images/create_class2.png)
-![](./images/entity_content.png)
+
+Agregaremos a nuestra clase las siguientes anotaciones:
+* `@Entity` con lo cual Spring podrá identificar la clase como un `Entity`
+* `@ToString` de `Lombok` nos va a generar una sobre carga del metodo toString de `java.lang.Object` en el cual
+incluira todas las propiedades del objecto en la salida
+* `@Getter` & `@Setter` de `Lombok` nos van a generar todo el código con los setter y getters de cada
+propiedad del Bean
+* `@AllArgsConstructor` de `Lombok` nos proveera de un cosntructor de clase que solicitara cada una de
+las propiedades del Bean
+* `@NoArgsConstructor` de `Lombok` nos proveera de un constructor por defecto (sin ningun parámetro)
+
+Agregaremos en nuestro entity las propiedades que queremos que contenga la tabla `product` en base de datos
+y crearemos una propiedad llamada `id` que será númerica la cual indicaremos mediante la anotación de JPA `@Id`
+que será la llave de nuestra tabla. Adicionalmente usando la anotación de JPA `@GeneratedValue` le indicaremos
+que esta llave se ira auto incrementando, por lo que nosotros no debemos preocuparnos de llenarla.
+
+Nuestra clase debería verse asi cuando este lista:
+
+```java
+package cl.continuum.product.entity;
+
+import lombok.*;
+
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import java.time.LocalDateTime;
+
+@NoArgsConstructor
+@AllArgsConstructor
+@Setter
+@Getter
+@ToString
+@Entity
+public class ProductEntity {
+    @Id
+    @GeneratedValue
+    private Long id;
+    private String name;
+    private Long price;
+    private LocalDateTime created;
+    private LocalDateTime updated;
+}
+```
 
 crear package model
 
