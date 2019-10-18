@@ -44,9 +44,11 @@ Luego que el IDE termine de importar el proyecto y descargar las dependencias, n
 
 crear package entity
 
-![](./images/project.png)
+![](./images/create_package.png)
+![](./images/create_package2.png)
 
 crear class entity
 
-![](./images/project.png)
+![](./images/create_class.png)
+![](./images/create_class2.png)
 
