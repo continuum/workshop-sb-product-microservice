@@ -3,7 +3,7 @@ package cl.continuum.product.model;
 import lombok.*;
 
 import javax.validation.constraints.*;
-import java.util.Map;
+import java.util.List;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -22,5 +22,5 @@ public class Product {
     @Max(1000000)
     private Long price;
 
-    private Map<String, Object> detail;
+    private List<Rating> detail;
 }
