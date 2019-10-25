@@ -360,3 +360,265 @@ public class ProductResource {
     }
 }
 ```
+
+#### Service    
+
+El componente denominado service consta de interfaces y clases que implementaran dichas interfaces, este patron de diseño es utilizado fuertemente en java para desacoplar codigo y construir componentes altamente escalables.
+para este workshop son utilizados para ejecutar las operaciones sobre nuestros recursos (Resources)
+
+Creamos el package `service` dentro de `cl.continuum.product` y luego creamos las interfaces `DetailService` y `ProductService`  dentro
+del package que acabamos de crear. Esta vez debemos seleccionar la opción `interface` en el menú.
+
+![](./images/create_interface.png)
+
+Luego vamos a crear las clases que implementaran duchas interfaces `DetailServiceImpl` y  `ProductServiceImpl` dentro del package que acabamos de crear. Esta vez debemos seleccionar la opción `class` en el menú.
+
+![](./images/create_class2.png)
+
+El contenio de las interfaces debe ser el siguiente:
+
+```java
+package cl.continuum.product.service;
+
+import java.util.List;
+
+public interface DetailService {
+
+    List get(String name);
+}
+```
+
+```java
+import cl.continuum.product.model.Product;
+
+import java.util.List;
+
+public interface ProductService {
+    Product add(Product product);
+    List<Product> list(String name);
+    Product get(Long id);
+}
+```
+La clase que implementa `DetailService` debe contener la anotacion `@Service` que se utiliza para marcar una clase que ejecuta operaciones. Tambien la anotacion `@Profile` que se utiliza para agrupar logicamente y que ppuede ser activado programadamente.
+
+
+```java
+ @Service
+ @Profile("prod")
+ public class DetailServiceImpl implements DetailService{}
+```
+
+Haremos lo mismo con `ProductServiceImpl`
+
+```java
+ @Service
+ @Profile("prod")
+ public class ProductServiceImpl implements ProductService {}
+```
+
+Utilizaremos  inyeccion de dependencia para obtener un objeto `RestTemplate` en nuestra clase implementacion `DetailServiceImpl` el cual nos permitira consumir un microservicio
+
+```java
+ private static final String SERVICE_HOST = "http://localhost:8082";
+
+    @Bean
+    private RestTemplate restTemplate() {
+        return new RestTemplate();
+    }
+```
+
+Utilizaremos  inyeccion de dependencia para obtener nuestro objeto `Repository` en nuestra clase implementacion `ProductServiceImpl`
+
+```java
+@Autowired
+private ProductCrudRepository productRepository;
+```
+
+
+Cada clase que implementa una interfaz esta obligada a implementar las firmas de los metodos definidos en estas, a continuacion los metodos para cada clase
+
+`DetailServiceImpl`
+```java
+@Override
+    @SuppressWarnings(value = "unchecked")
+    public List get(String name) {
+        try {
+            String url = String.format("%s/api/v1/rating", SERVICE_HOST);
+            UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(url).queryParam("name", name);
+            //ResponseEntity<List> resp = restTemplate().getForEntity(builder.toUriString(), List.class);
+
+            ResponseEntity<List<Rating>> resp =  restTemplate().exchange(
+                    String.format("%s?name=%s",url,name),
+                    HttpMethod.GET,
+                    null,
+                    new ParameterizedTypeReference<List<Rating>>(){});
+            if (resp.getStatusCode().value() != 200) {
+                throw new Exception("Gateway Error");
+            }
+            return resp.getBody();
+        } catch(Exception ex) {
+            System.err.println(ex.getMessage() + " : " + ex.getCause());
+            return null;
+        }
+    }
+ 
+```
+
+`ProductServiceImpl`
+```java
+@Override
+    public Product add(Product product) {
+        ProductEntity productEntity = new ProductEntity();
+        BeanUtils.copyProperties(product, productEntity);
+        productEntity.setCreated(LocalDateTime.now());
+
+        ProductEntity savedEntity = productRepository.save(productEntity);
+        BeanUtils.copyProperties(savedEntity, product);
+
+        return product;
+    }
+
+    @Override
+    public List<Product> list(String name) {
+        Iterable<ProductEntity> entities = null == name ? productRepository.findAll() : productRepository.findByNameLike("%" + name + "%");
+        List<Product> products = new ArrayList<>();
+        entities.forEach(entity -> {
+            Product product = new Product();
+            BeanUtils.copyProperties(entity, product);
+            products.add(product);
+        });
+
+        return products;
+    }
+
+    @Override
+    public Product get(Long id) {
+        Product product = new Product();
+        Optional<ProductEntity> productEntity = productRepository.findById(id);
+        productEntity.ifPresent(entity -> {
+            BeanUtils.copyProperties(entity, product);
+        });
+
+        if (null == product.getId()) return null;
+        return product;
+    }
+```
+
+Ya terminada nuestras clases debería lucir asi:
+
+```java
+package cl.continuum.product.service;
+
+import cl.continuum.product.model.Rating;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Profile;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponentsBuilder;
+
+import java.util.List;
+
+@Service
+@Profile("prod")
+public class DetailServiceImpl implements DetailService {
+
+    private static final String SERVICE_HOST = "http://localhost:8082";
+
+    @Bean
+    private RestTemplate restTemplate() {
+        return new RestTemplate();
+    }
+
+    @Override
+    @SuppressWarnings(value = "unchecked")
+    public List get(String name) {
+        try {
+            String url = String.format("%s/api/v1/rating", SERVICE_HOST);
+            UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(url).queryParam("name", name);
+            //ResponseEntity<List> resp = restTemplate().getForEntity(builder.toUriString(), List.class);
+
+            ResponseEntity<List<Rating>> resp =  restTemplate().exchange(
+                    String.format("%s?name=%s",url,name),
+                    HttpMethod.GET,
+                    null,
+                    new ParameterizedTypeReference<List<Rating>>(){});
+            if (resp.getStatusCode().value() != 200) {
+                throw new Exception("Gateway Error");
+            }
+            return resp.getBody();
+        } catch(Exception ex) {
+            System.err.println(ex.getMessage() + " : " + ex.getCause());
+            return null;
+        }
+    }
+}
+
+```
+
+```java
+
+ package cl.continuum.product.service;
+ 
+ import cl.continuum.product.entity.ProductEntity;
+ import cl.continuum.product.model.Product;
+ import cl.continuum.product.repository.ProductCrudRepository;
+ import org.springframework.beans.BeanUtils;
+ import org.springframework.beans.factory.annotation.Autowired;
+ import org.springframework.context.annotation.Profile;
+ import org.springframework.stereotype.Service;
+ 
+ import java.time.LocalDateTime;
+ import java.util.ArrayList;
+ import java.util.List;
+ import java.util.Optional;
+ 
+ @Service
+ @Profile("prod")
+ public class ProductServiceImpl implements ProductService {
+ 
+     @Autowired
+     private ProductCrudRepository productRepository;
+ 
+     @Override
+     public Product add(Product product) {
+         ProductEntity productEntity = new ProductEntity();
+         BeanUtils.copyProperties(product, productEntity);
+         productEntity.setCreated(LocalDateTime.now());
+ 
+         ProductEntity savedEntity = productRepository.save(productEntity);
+         BeanUtils.copyProperties(savedEntity, product);
+ 
+         return product;
+     }
+ 
+     @Override
+     public List<Product> list(String name) {
+         Iterable<ProductEntity> entities = null == name ? productRepository.findAll() : productRepository.findByNameLike("%" + name + "%");
+         List<Product> products = new ArrayList<>();
+         entities.forEach(entity -> {
+             Product product = new Product();
+             BeanUtils.copyProperties(entity, product);
+             products.add(product);
+         });
+ 
+         return products;
+     }
+ 
+     @Override
+     public Product get(Long id) {
+         Product product = new Product();
+         Optional<ProductEntity> productEntity = productRepository.findById(id);
+         productEntity.ifPresent(entity -> {
+             BeanUtils.copyProperties(entity, product);
+         });
+ 
+         if (null == product.getId()) return null;
+         return product;
+     }
+ }
+
+
+```
