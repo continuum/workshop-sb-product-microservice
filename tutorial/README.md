@@ -234,3 +234,26 @@ Dado que este es un Bean usaremos nuevamente las anotaciones de `Lombok` que ya 
 
 Lo nuevo que vemos en esta clase son las anotaciones `@NotEmpty`, `@Size`, `@NotNull`, `@Min` y `@Max` las cuales son
 constrains de Java que nos facilitaran las validación automatica de dichas propiedades.
+
+Adicionalmente vamos a necesitar un modelo llamado `Rating` el cual nos servira para interactuar con el servicio externo
+que provee información extra de cada producto. Este modelo deberá verse como sigue:
+
+```java
+package cl.continuum.product.model;
+
+import lombok.*;
+
+@NoArgsConstructor
+@AllArgsConstructor
+@Setter
+@Getter
+@ToString
+public class Rating {
+    private Long id;
+    private String productName;
+    private Integer rating;
+    private Integer commentsCount;
+    private Long price;
+    private String ecommerce;
+}
+```

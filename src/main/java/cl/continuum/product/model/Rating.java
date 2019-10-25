@@ -1,6 +1,5 @@
 package cl.continuum.product.model;
 
-
 import lombok.*;
 
 @NoArgsConstructor
