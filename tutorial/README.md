@@ -133,14 +133,55 @@ public class ProductEntity {
 }
 ```
 
-crear package model
+#### Repository
 
-![](./images/create_package.png)
-![](./images/model_package.png)
+Los repository son interfaces que nos provee Spring para simplificar el uso de los Entity y las operaciones
+que podemos relizar sobre ellos.
 
-crear class entity
+Para este workshop vamos a utilizar especificamente la interfaz `CrudRepository`, la que nos provee listas todas las
+operaciones de `CRUD` sobre una tabla o Entity.
 
-![](./images/create_class.png)
-![](./images/create_class2.png)
-![](./images/entity_content.png)
+Creamos el package `repository` dentro de `cl.continuum.product` y luego cramos la clase `ProductCrudRepository` dentro
+del package que acabamos de crear. Esta vez debemos seleccionar la opción `Interface` en el menú.
+
+![](./images/create_interface.png)
+
+Luego debemos hacer que esta interface extienda la interface de Spring `CrudRepository` la que nos proveera de las
+operaciones basicas de `CRUD` sobre la tabla `product` a travez de nuestro entity `ProductEntity` con tan solo
+indicarselo en sus tipos genericos:
+
+`public interface ProductCrudRepository extends CrudRepository<ProductEntity, Long>`
+
+Dado que su llave primaria la hemos definido de tipo `Long` es que le hemos indicado en su segundo tipo generico este
+tipo de dato.
+
+Una de las operaciones que debemos realizar para el funcionamiento de nuestro servicio será la de buscar productos por
+nombre, para lo cual querremos hacer un `LIKE` sobre el campo `name` en la tabla producto. Esta operación si bien no
+viene ya lista en la interfaz de Spring, dado que no tiene como conocer cada nombre que podriamos tener en nuestras tablas,
+crearla es muy sencillo, basta con que declaremos el siguiente metodo en nuestra interfaz:
+
+`List<ProductEntity> findByNameLike(String name);`
+
+Con esto Spring sabe que lo que debe hacer cuando invoquemos este campo es crear una consulta como esta:
+
+```sql
+select * from product p where p.name like '$NAME'
+```
+
+donde `$NAME` sera lo que le entreguemos como parametro al metodo.
+
+Ya terminada nuestra interfaz debería lucir asi:
+
+```java
+package cl.continuum.product.repository;
+
+import cl.continuum.product.entity.ProductEntity;
+import org.springframework.data.repository.CrudRepository;
+
+import java.util.List;
+
+public interface ProductCrudRepository extends CrudRepository<ProductEntity, Long> {
+    List<ProductEntity> findByNameLike(String name);
+}
+```
 
