@@ -1,6 +1,5 @@
 package cl.continuum.product.service;
 
-import cl.continuum.product.model.Product;
 import cl.continuum.product.model.Rating;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Profile;
@@ -11,9 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @Service
 @Profile("prod")
