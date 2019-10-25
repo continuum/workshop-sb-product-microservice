@@ -42,25 +42,7 @@ Luego que el IDE termine de importar el proyecto y descargar las dependencias, n
 
 ### Manos a la Obra
 
-crear package entity
 
-![](./images/create_package.png)
-![](./images/create_package2.png)
 
-crear class entity
 
-![](./images/create_class.png)
-![](./images/create_class2.png)
-![](./images/entity_content.png)
-
-crear package model
-
-![](./images/create_package.png)
-![](./images/model_package.png)
-
-crear class entity
-
-![](./images/create_class.png)
-![](./images/create_class2.png)
-![](./images/entity_content.png)
 
