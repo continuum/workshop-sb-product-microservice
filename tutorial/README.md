@@ -150,7 +150,9 @@ Luego debemos hacer que esta interface extienda la interface de Spring `CrudRepo
 operaciones basicas de `CRUD` sobre la tabla `product` a travez de nuestro entity `ProductEntity` con tan solo
 indicarselo en sus tipos genericos:
 
-`public interface ProductCrudRepository extends CrudRepository<ProductEntity, Long>`
+```java
+public interface ProductCrudRepository extends CrudRepository<ProductEntity, Long>
+```
 
 Dado que su llave primaria la hemos definido de tipo `Long` es que le hemos indicado en su segundo tipo generico este
 tipo de dato.
@@ -160,15 +162,17 @@ nombre, para lo cual querremos hacer un `LIKE` sobre el campo `name` en la tabla
 viene ya lista en la interfaz de Spring, dado que no tiene como conocer cada nombre que podriamos tener en nuestras tablas,
 crearla es muy sencillo, basta con que declaremos el siguiente metodo en nuestra interfaz:
 
-`List<ProductEntity> findByNameLike(String name);`
+```java
+List<ProductEntity> findByNameLike(String name);
+```
 
 Con esto Spring sabe que lo que debe hacer cuando invoquemos este campo es crear una consulta como esta:
 
 ```sql
-select * from product p where p.name like '$NAME'
+select * from product p where p.name like '${name}'
 ```
 
-donde `$NAME` sera lo que le entreguemos como parametro al metodo.
+donde `${name}` será lo que le entreguemos como parametro al metodo.
 
 Ya terminada nuestra interfaz debería lucir asi:
 
@@ -185,3 +189,48 @@ public interface ProductCrudRepository extends CrudRepository<ProductEntity, Lon
 }
 ```
 
+#### Modelo
+
+El modelo son los objetos que usualmente usaremos para transaportar informacion desde y hacia nuestro servicio. Es
+bastante comnún que podamos tener una clase modelo que represente la información que tenemos en un entity, dado que el
+modelado de datos de nuestra base de datos muchas veces coincide con el modelo de información que nuestro servicio hará
+transitar. Esta no será la excepción y vamos a crear una clase de prodelo que llamaremos `Product`.
+
+Antes de crear nuestra clase vamos a crear el package `model` dentro del package `cl.continuum.product` y luego creamos
+nuestra clase dentro del package que hemos creado recien.
+
+Nuestra clase deberá verse así:
+
+```java
+package cl.continuum.product.model;
+
+import lombok.*;
+
+import javax.validation.constraints.*;
+import java.util.List;
+
+@NoArgsConstructor
+@AllArgsConstructor
+@Setter
+@Getter
+@ToString
+public class Product {
+    private Long id;
+
+    @NotEmpty(message = "Please provide a name")
+    @Size(min=3, max=200)
+    private String name;
+
+    @NotNull(message = "Please provide a price")
+    @Min(1)
+    @Max(1000000)
+    private Long price;
+
+    private List<Rating> detail;
+}
+```
+
+Dado que este es un Bean usaremos nuevamente las anotaciones de `Lombok` que ya hemos descrito previamente.
+
+Lo nuevo que vemos en esta clase son las anotaciones `@NotEmpty`, `@Size`, `@NotNull`, `@Min` y `@Max` las cuales son
+constrains de Java que nos facilitaran las validación automatica de dichas propiedades.
