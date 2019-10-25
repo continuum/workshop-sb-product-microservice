@@ -185,3 +185,106 @@ public interface ProductCrudRepository extends CrudRepository<ProductEntity, Lon
 }
 ```
 
+#### Resource    
+
+Un recurso es un objeto con, datos asociados, relaciones con otros recursos y un conjunto de métodos que operan sobre él
+
+Spring provee la anotacion @RestController, para facilitar la implementacion de los metodos definidos por la arquitectura Rest
+
+Creamos el package `resource` dentro de `cl.continuum.product` y luego cramos la clase `ProductResource` dentro
+del package que acabamos de crear. Esta vez debemos seleccionar la opción `class` en el menú.
+
+![](./images/resource_class.png)
+
+Luego debemos agregar la anotacion `@RestController`  sobre la definicion de `class`, esta anotacion es utilizada para marcar un objeto como `request handler` y generalmente se utiliza para crear servicios RESTful. Tambien debemos agregar la anotacion @RequestMapping(path = "/products", produces = "application/json")` , esta anotacion se utiliza para mapear `requests` con clases o metodos :
+
+`@RestController
+ @RequestMapping(path = "/products", produces = "application/json")
+ public class ProductResource`
+
+Como ya mencionamos antes la clase `Resource` contiene metodos que nos permitiran ejecutar operaciones sobre este y otros recursos, la firma de estas operaciones esta contenida en interfaces llamadas  `Service` y la implementacion en clases `ServiceImpl`. Para poder acceder a las implementaciones de nuestros servicios `Spring` nos provee la inyeccion de dependencia que tambien facilitara la escabilidad y manejo del ciclo de vida de estas implementaciones.
+`    @Autowired
+     private ProductService productService;
+     @Autowired
+     private DetailService detailService;`
+
+Para finalizar definiremos los siguientes `end points`, utilizaremos la anotacion @GetMapping la cual se utiliza para mapear request GET y la anotacion @PostMapping que se utiliza para mapear operaciones POST
+
+```java
+ @GetMapping(path = "")
+     ResponseEntity<?> getProducts(@RequestParam(required = false, name = "name") String name) {
+         List<Product> products = productService.list(name);
+         if (products == null || products.isEmpty()) {
+             return ResponseEntity.status(404).build();
+         }
+         return ResponseEntity.ok(products);
+     }
+     @PostMapping(path = "", consumes = "application/json")
+     ResponseEntity<?> createProduct(@Valid @RequestBody(required = true) Product product) {
+         product = productService.add(product);
+         return ResponseEntity.status(201).body(product);
+     }
+     @GetMapping(path = "/{id}")
+     ResponseEntity<?> getProduct(@PathVariable(required = false, name = "id") Long id) {
+         Product product = productService.get(id);
+         if (product == null) {
+             return ResponseEntity.status(404).build();
+         }
+         List detail = detailService.get(product.getName());
+         product.setDetail(detail);
+         return ResponseEntity.ok(product);
+     }
+```
+Ya terminada nuestra clase debería lucir asi:
+
+```java
+package cl.continuum.product.resource;
+
+import cl.continuum.product.model.Product;
+import cl.continuum.product.service.DetailService;
+import cl.continuum.product.service.ProductService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
+import java.util.List;
+import java.util.Map;
+
+@RestController
+@RequestMapping(path = "/products", produces = "application/json")
+public class ProductResource {
+
+    @Autowired
+    private ProductService productService;
+
+    @Autowired
+    private DetailService detailService;
+
+    @GetMapping(path = "")
+    ResponseEntity<?> getProducts(@RequestParam(required = false, name = "name") String name) {
+        List<Product> products = productService.list(name);
+        if (products == null || products.isEmpty()) {
+            return ResponseEntity.status(404).build();
+        }
+        return ResponseEntity.ok(products);
+    }
+
+    @PostMapping(path = "", consumes = "application/json")
+    ResponseEntity<?> createProduct(@Valid @RequestBody(required = true) Product product) {
+        product = productService.add(product);
+        return ResponseEntity.status(201).body(product);
+    }
+
+    @GetMapping(path = "/{id}")
+    ResponseEntity<?> getProduct(@PathVariable(required = false, name = "id") Long id) {
+        Product product = productService.get(id);
+        if (product == null) {
+            return ResponseEntity.status(404).build();
+        }
+        List detail = detailService.get(product.getName());
+        product.setDetail(detail);
+        return ResponseEntity.ok(product);
+    }
+}
+```
